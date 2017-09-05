@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
+    environment:
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+
+  service:
+    image: test-service:latest
+    environment:
+      - ES_HOST=elasticsearch
+    networks:
+      - svcnet
+      - esnet
+
+  gateway:
+    image: test-gateway:latest
+    environment:
+      - SERVICE_HOST=service
+    ports:
+      - 8000:8000
+    networks:
+      - svcnet
+      
+networks:
+  svcnet:
+  esnet:
+
